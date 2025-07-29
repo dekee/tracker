@@ -1,6 +1,6 @@
-package com.example.taxtracker.controller
+package tech.derrick.taxtracker.controller
 
-import com.example.taxtracker.service.TaxStatusDbTracker
+import tech.derrick.taxtracker.service.TaxStatusDbTracker
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

@@ -1,6 +1,6 @@
-package com.example.taxtracker.repository
+package tech.derrick.taxtracker.repository
 
-import com.example.taxtracker.model.Parcel
+import tech.derrick.taxtracker.model.Parcel
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface ParcelRepository : JpaRepository<Parcel, String>

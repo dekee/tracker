@@ -1,4 +1,4 @@
-package com.example.taxtracker.model
+package tech.derrick.taxtracker.model
 
 import jakarta.persistence.Entity
 import jakarta.persistence.Id

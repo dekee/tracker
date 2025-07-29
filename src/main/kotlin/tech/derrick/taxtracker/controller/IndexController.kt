@@ -1,10 +1,9 @@
-package com.example.taxtracker.controller
+package tech.derrick.taxtracker.controller
 
 
-import com.example.taxtracker.model.Parcel
-import com.example.taxtracker.model.StatusChange
-import com.example.taxtracker.repository.ParcelRepository
-import com.example.taxtracker.repository.StatusChangeRepository
+
+import tech.derrick.taxtracker.repository.ParcelRepository
+import tech.derrick.taxtracker.repository.StatusChangeRepository
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping

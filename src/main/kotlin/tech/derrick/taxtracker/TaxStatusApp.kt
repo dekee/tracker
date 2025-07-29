@@ -1,9 +1,7 @@
-package com.example.taxtracker
+package tech.derrick.taxtracker
 
-import com.example.taxtracker.service.TaxStatusDbTracker
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.context.ConfigurableApplicationContext
 
 @SpringBootApplication
 class TaxStatusApp

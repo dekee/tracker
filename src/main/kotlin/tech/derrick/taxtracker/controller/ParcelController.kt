@@ -1,7 +1,7 @@
-package com.example.taxtracker.controller
+package tech.derrick.taxtracker.controller
 
-import com.example.taxtracker.model.Parcel
-import com.example.taxtracker.repository.ParcelRepository
+import tech.derrick.taxtracker.model.Parcel
+import tech.derrick.taxtracker.repository.ParcelRepository
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 

@@ -1,11 +1,11 @@
-package com.example.taxtracker.service
+package tech.derrick.taxtracker.service
 
 
 
-import com.example.taxtracker.model.Parcel
-import com.example.taxtracker.model.StatusChange
-import com.example.taxtracker.repository.ParcelRepository
-import com.example.taxtracker.repository.StatusChangeRepository
+import tech.derrick.taxtracker.model.Parcel
+import tech.derrick.taxtracker.model.StatusChange
+import tech.derrick.taxtracker.repository.ParcelRepository
+import tech.derrick.taxtracker.repository.StatusChangeRepository
 import okhttp3.*
 import org.jsoup.Jsoup
 import org.springframework.scheduling.annotation.Scheduled

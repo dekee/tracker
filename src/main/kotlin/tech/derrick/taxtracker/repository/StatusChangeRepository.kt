@@ -1,6 +1,6 @@
-package com.example.taxtracker.repository
+package tech.derrick.taxtracker.repository
 
-import com.example.taxtracker.model.StatusChange
+import tech.derrick.taxtracker.model.StatusChange
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface StatusChangeRepository : JpaRepository<StatusChange, String>
