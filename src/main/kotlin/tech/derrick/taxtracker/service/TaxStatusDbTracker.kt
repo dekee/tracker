@@ -19,7 +19,8 @@ import kotlin.math.abs
 @Service
 class TaxStatusDbTracker(
     private val parcelRepository: ParcelRepository,
-    private val statusChangeRepository: StatusChangeRepository
+    private val statusChangeRepository: StatusChangeRepository,
+    private val pushoverNotifier: PushoverNotifier
 ) {
     private val log = LoggerFactory.getLogger(TaxStatusDbTracker::class.java)
     private val parcelsFilePath: String = System.getenv("PARCELS_FILE") ?: "parcels.txt"
@@ -139,6 +140,7 @@ class TaxStatusDbTracker(
         log.info("📦 runDaily processing {} parcels", parcels.size)
 
         for (parcel in parcels) {
+            val oldStatus = parcel.status
             val html = fetchDetails(parcel.parcelId, parcel.ownerName.split(",")[0]) ?: continue
             val doc = Jsoup.parse(html)
 
@@ -157,7 +159,7 @@ class TaxStatusDbTracker(
             val address = firstRowTds?.getOrNull(1)?.text()?.trim() ?: ""
 
 
-            val changed = parcel.status != newStatus && newStatus != placeholderStatus
+            val changed = oldStatus != newStatus && newStatus != placeholderStatus
             val historyRows = doc.select("h4:contains(History)")
                 .firstOrNull()
                 ?.nextElementSibling()
@@ -207,10 +209,16 @@ class TaxStatusDbTracker(
                 statusChangeRepository.save(
                     StatusChange(
                         parcelId = parcel.parcelId,
-                        previousStatus = parcel.status,
+                        previousStatus = oldStatus,
                         newStatus = newStatus,
                         ownerName = parcel.ownerName
                     )
+                )
+                pushoverNotifier.notifyStatusChange(
+                    parcelId = parcel.parcelId,
+                    ownerName = parcel.ownerName,
+                    previousStatus = oldStatus,
+                    newStatus = newStatus
                 )
             }
         }
