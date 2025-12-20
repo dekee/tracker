@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tax-tracker
+  namespace: tax-tracker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tax-tracker
+  template:
+    metadata:
+      labels:
+        app: tax-tracker
+    spec:
+      containers:
+        - name: app
+          image: tax-tracker
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8085
+          env:
+            - name: SERVER_PORT
+              value: "8085"
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://tax-tracker-postgres:5432/tasktracker
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: tax-tracker-postgres
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tax-tracker-postgres
+                  key: POSTGRES_PASSWORD
+

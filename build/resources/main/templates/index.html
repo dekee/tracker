@@ -8,6 +8,7 @@
         table { width: 100%; border-collapse: collapse; margin-bottom: 2em; }
         th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
         th { background-color: #f5f5f5; }
+        tbody tr:nth-child(even) { background-color: #f9f9f9; }
         .green-status {
             color: green;
             font-weight: bold;
@@ -16,9 +17,16 @@
 </head>
 <body>
 <h1>Parcel Data</h1>
+
+<p>
+    <strong>Total Paid for SOLD Parcels on 6/4/2025:</strong>
+    <span th:text="${soldTotalDisplay}"></span>
+</p>
+
 <table>
     <thead>
     <tr>
+        <th>#</th>
         <th>Parcel ID</th>
         <th>Owner</th>
         <th>Status</th>
@@ -29,12 +37,14 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="p : ${parcels}">
+    <tr th:each="p, iter : ${parcels}">
+        <td th:text="${iter.index + 1}"></td>
         <td th:text="${p.parcelId}"></td>
         <td th:text="${p.ownerName}"></td>
         <td th:text="${p.status}"
             th:classappend="${p.status != 'SOLD. Call the office for redemption balance information' and p.status != 'Call the office for redemption balance information'} ? 'green-status' : ''">
-        </td>        <td th:text="${p.balance}"></td>
+        </td>
+        <td th:text="${p.balance}"></td>
         <td th:text="${p.parcelNumber}"></td>
         <td th:text="${p.address}"></td>
         <td th:text="${p.legalDescription}"></td>

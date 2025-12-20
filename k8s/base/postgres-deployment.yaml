@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tax-tracker-postgres
+  namespace: tax-tracker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tax-tracker-postgres
+  template:
+    metadata:
+      labels:
+        app: tax-tracker-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: tax-tracker-postgres
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: tax-tracker-postgres-data
+

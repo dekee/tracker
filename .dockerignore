@@ -1,0 +1,9 @@
+.gradle
+.idea
+.vscode
+build
+logs
+postgres_data
+tax-tracker-complete-full.zip
+*.iml
+

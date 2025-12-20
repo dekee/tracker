@@ -8,17 +8,21 @@ import tech.derrick.taxtracker.repository.ParcelRepository
 import tech.derrick.taxtracker.repository.StatusChangeRepository
 import okhttp3.*
 import org.jsoup.Jsoup
+import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.io.File
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 @Service
 class TaxStatusDbTracker(
     private val parcelRepository: ParcelRepository,
     private val statusChangeRepository: StatusChangeRepository
 ) {
+    private val log = LoggerFactory.getLogger(TaxStatusDbTracker::class.java)
+
     private val client = OkHttpClient.Builder()
         .followRedirects(true)
         .connectTimeout(10, TimeUnit.SECONDS)
@@ -39,7 +43,7 @@ class TaxStatusDbTracker(
         if (parcelRepository.count() == 0L) {
             val file = File("parcels.txt")
             if (!file.exists()) {
-                println("🚫 parcels.txt not found.")
+                log.warn("🚫 parcels.txt not found.")
                 return
             }
 
@@ -79,19 +83,32 @@ class TaxStatusDbTracker(
                     val cols = row.select("td")
                     if (cols.size >= 3) {
                         val date = cols[0].text().trim()
-                        val desc = cols[1].text().trim().uppercase()
+                        val descRaw = cols[1].text().trim()
+                        val desc = descRaw.replace("\\s+".toRegex(), " ").trim().uppercase()
                         val amount = cols[2].text().trim().replace("[^\\d.-]".toRegex(), "").toDoubleOrNull() ?: 0.0
 
                         if (date == targetDate) {
                             when {
-                                desc.contains("PAYMENT") -> {paymentTotal += amount; println("@@@@ !!!!$paymentTotal"); }
-                                desc.contains("INTEREST CHARGE") -> {interestTotal += amount; println("@@@@ !!!!$interestTotal");}
+                                // Sum total payment as the absolute value of any payment rows
+                                desc == "PAYMENT" || desc == "INTEREST PAYMENT" -> {
+                                    paymentTotal += abs(amount)
+                                    log.info("@@@@ paymentTotal (initial load) = {}", paymentTotal)
+                                }
+
+                                desc == "INTEREST CHARGE" -> {
+                                    interestTotal += amount
+                                    log.info("@@@@ interestTotal (initial load) = {}", interestTotal)
+                                }
                             }
                         }
                     }
                 }
 
-                val combinedBalance = (paymentTotal + interestTotal).takeIf { it > 0 }?.toString() ?: "N/A"
+                // Store total payment (and interest if you still want it) as the balance field
+                val combinedBalance = paymentTotal
+                    .takeIf { it != 0.0 }
+                    ?.toString()
+                    ?: "N/A"
 
                 parcelRepository.save(
                     Parcel(
@@ -106,7 +123,7 @@ class TaxStatusDbTracker(
                 )
             }
 
-            println("✅ Imported all parcels with full details from parcels.txt")
+            log.info("✅ Imported all parcels with full details from parcels.txt")
         }
     }
 
@@ -150,19 +167,32 @@ class TaxStatusDbTracker(
                 val cols = row.select("td")
                 if (cols.size >= 3) {
                     val date = cols[0].text().trim()
-                    val desc = cols[1].text().trim().uppercase()
+                    val descRaw = cols[1].text().trim()
+                    val desc = descRaw.replace("\\s+".toRegex(), " ").trim().uppercase()
                     val amount = cols[2].text().trim().replace("[^\\d.-]".toRegex(), "").toDoubleOrNull() ?: 0.0
 
                     if (date == targetDate) {
                         when {
-                            desc.contains("PAYMENT") -> paymentTotal += amount
-                            desc.contains("INTEREST CHARGE") -> interestTotal += amount
+                            // Sum total payment as the absolute value of any payment rows
+                            desc == "PAYMENT" || desc == "INTEREST PAYMENT" -> {
+                                paymentTotal += abs(amount)
+                                log.info("@@@@ paymentTotal (runDaily) = {}", paymentTotal)
+                            }
+
+                            desc == "INTEREST CHARGE" -> {
+                                interestTotal += amount
+                                log.info("@@@@ interestTotal (runDaily) = {}", interestTotal)
+                            }
                         }
                     }
                 }
             }
 
-            val combinedBalance = (paymentTotal + interestTotal).takeIf { it > 0 }?.toString() ?: "N/A"
+            // Store total payment as the balance field for the target date
+            val combinedBalance = paymentTotal
+                .takeIf { it != 0.0 }
+                ?.toString()
+                ?: "N/A"
             parcel.status = newStatus
             parcel.balance = combinedBalance
             parcel.legalDescription = legal
