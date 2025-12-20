@@ -8,7 +8,7 @@ configMapGenerator:
   - name: tax-tracker-parcels
     namespace: tax-tracker
     files:
-      - parcels.txt=../../parcels.txt
+      - parcels.txt=parcels.txt
 
 resources:
   - namespace.yaml
