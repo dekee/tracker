@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: REPLACE_ME_GIT_REPO_URL
-    targetRevision: HEAD
+    repoURL: https://github.com/dekee/tracker.git
+    targetRevision: main
     path: k8s/overlays/kind
   destination:
     server: https://kubernetes.default.svc

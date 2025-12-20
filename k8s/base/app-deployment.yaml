@@ -22,6 +22,8 @@ spec:
           env:
             - name: SERVER_PORT
               value: "8085"
+            - name: PARCELS_FILE
+              value: /app/parcels.txt
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://tax-tracker-postgres:5432/tasktracker
             - name: SPRING_DATASOURCE_USERNAME
@@ -34,4 +36,13 @@ spec:
                 secretKeyRef:
                   name: tax-tracker-postgres
                   key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: parcels
+              mountPath: /app/parcels.txt
+              subPath: parcels.txt
+              readOnly: true
+      volumes:
+        - name: parcels
+          configMap:
+            name: tax-tracker-parcels
 

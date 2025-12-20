@@ -22,6 +22,7 @@ class TaxStatusDbTracker(
     private val statusChangeRepository: StatusChangeRepository
 ) {
     private val log = LoggerFactory.getLogger(TaxStatusDbTracker::class.java)
+    private val parcelsFilePath: String = System.getenv("PARCELS_FILE") ?: "parcels.txt"
 
     private val client = OkHttpClient.Builder()
         .followRedirects(true)
@@ -41,9 +42,9 @@ class TaxStatusDbTracker(
         val targetDate = "6/4/2025"
 
         if (parcelRepository.count() == 0L) {
-            val file = File("parcels.txt")
+            val file = File(parcelsFilePath)
             if (!file.exists()) {
-                log.warn("🚫 parcels.txt not found.")
+                log.warn("🚫 parcels file not found at '{}'. Set PARCELS_FILE or mount parcels.txt into the container.", parcelsFilePath)
                 return
             }
 
@@ -132,8 +133,10 @@ class TaxStatusDbTracker(
     fun runDaily() {
         val targetDate = "6/4/2025"
 
+        log.info("▶️ runDaily starting (parcelsFilePath='{}')", parcelsFilePath)
         loadInitialParcelsIfNeeded()  // ✅ new line
         val parcels = parcelRepository.findAll()
+        log.info("📦 runDaily processing {} parcels", parcels.size)
 
         for (parcel in parcels) {
             val html = fetchDetails(parcel.parcelId, parcel.ownerName.split(",")[0]) ?: continue
@@ -211,6 +214,7 @@ class TaxStatusDbTracker(
                 )
             }
         }
+        log.info("✅ runDaily complete")
     }
 
     private fun fetchDetails(parcelId: String, nameMatch: String): String? {

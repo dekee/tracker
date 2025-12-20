@@ -1,0 +1,9 @@
+.gradle/
+.idea/
+build/
+logs/
+postgres_data/
+
+# macOS
+.DS_Store
+
