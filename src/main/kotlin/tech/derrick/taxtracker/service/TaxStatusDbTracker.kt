@@ -228,7 +228,7 @@ class TaxStatusDbTracker(
     private fun fetchDetails(parcelId: String, nameMatch: String): String? {
         val searchUrl = "https://snstaxpayments.com/Search?" +
                 "searchFor1=${URLEncoder.encode(parcelId, "UTF-8")}&" +
-                "searchType=1&taxyear=2024&client=stcharles&" +
+                "searchType=1&taxyear=2025&client=stcharles&" +
                 "nameMatch=${URLEncoder.encode(nameMatch, "UTF-8")}"
 
         val searchRequest = Request.Builder().url(searchUrl).headers(headers).build()
