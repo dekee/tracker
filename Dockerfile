@@ -12,3 +12,8 @@ EXPOSE 8085
 ENV SERVER_PORT=8085
 ENTRYPOINT ["java","-jar","/app/app.jar"]
 
+
+
+
+
+

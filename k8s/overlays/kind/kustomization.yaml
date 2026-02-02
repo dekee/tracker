@@ -7,5 +7,6 @@ resources:
 # Image name ArgoCD will apply; you load this image into Kind (no registry needed).
 images:
   - name: tax-tracker
+    newName: dekee/tax-tracker
     newTag: dev
 
