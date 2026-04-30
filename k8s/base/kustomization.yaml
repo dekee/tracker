@@ -18,4 +18,5 @@ resources:
   - postgres-service.yaml
   - app-deployment.yaml
   - app-service.yaml
+  - ingress.yaml
 
