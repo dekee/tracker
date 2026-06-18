@@ -43,7 +43,10 @@ class IndexController(
             val formattedBalance = p.balance.toDoubleOrNull()
                 ?.let { "$" + decimalFormat.format(it) }
                 ?: p.balance
-            p.copy(balance = formattedBalance)
+            p.copy(balance = formattedBalance).apply {
+                redfinUrl = tech.derrick.taxtracker.service.ParcelEnrichment
+                    .byParcelId[p.parcelId]?.redfinUrl
+            }
         }
 
         model.addAttribute("parcels", viewParcels)

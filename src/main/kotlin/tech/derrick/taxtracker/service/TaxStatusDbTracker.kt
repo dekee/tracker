@@ -112,6 +112,7 @@ class TaxStatusDbTracker(
                     ?.toString()
                     ?: "N/A"
 
+                val enrich = ParcelEnrichment.byParcelId[parcelId]
                 parcelRepository.save(
                     Parcel(
                         parcelId = parcelId,
@@ -120,7 +121,10 @@ class TaxStatusDbTracker(
                         balance = combinedBalance,
                         parcelNumber = parcelNumber,
                         address = address,
-                        legalDescription = legal
+                        legalDescription = legal,
+                        city = enrich?.city,
+                        zipCode = enrich?.zipCode,
+                        redfinEstimate = enrich?.redfinEstimate
                     )
                 )
             }

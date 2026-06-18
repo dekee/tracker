@@ -33,6 +33,9 @@
         <th>Balance</th>
         <th>Parcel #</th>
         <th>Address</th>
+        <th>City</th>
+        <th>Zip Code</th>
+        <th>Redfin Estimate</th>
         <th>Legal Description</th>
     </tr>
     </thead>
@@ -47,6 +50,13 @@
         <td th:text="${p.balance}"></td>
         <td th:text="${p.parcelNumber}"></td>
         <td th:text="${p.address}"></td>
+        <td th:text="${p.city}"></td>
+        <td th:text="${p.zipCode}"></td>
+        <td>
+            <span th:text="${p.redfinEstimate}"></span>
+            <a th:if="${p.redfinUrl != null and #strings.containsIgnoreCase(p.status, 'SOLD')}"
+               th:href="${p.redfinUrl}" target="_blank" rel="noopener">Redfin&nbsp;&#8599;</a>
+        </td>
         <td th:text="${p.legalDescription}"></td>
     </tr>
     </tbody>
